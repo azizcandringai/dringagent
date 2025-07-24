@@ -2,39 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Modern Chatbot Design System - All colors MUST be HSL */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Chat Application Colors */
+    --background: 240 10% 98%;
+    --foreground: 240 10% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 240 10% 8%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Modern Blue */
+    --primary: 214 100% 58%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 214 100% 70%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Chat Interface Colors */
+    --chat-background: 240 15% 96%;
+    --chat-user-bubble: 214 100% 58%;
+    --chat-user-text: 0 0% 100%;
+    --chat-bot-bubble: 0 0% 100%;
+    --chat-bot-text: 240 10% 8%;
+    
+    --secondary: 240 5% 94%;
+    --secondary-foreground: 240 10% 20%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 240 5% 94%;
+    --muted-foreground: 240 5% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 240 5% 94%;
+    --accent-foreground: 240 10% 20%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 240 5% 88%;
+    --input: 240 5% 88%;
+    --ring: 214 100% 58%;
 
     --radius: 0.5rem;
 
@@ -56,33 +64,43 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark Mode Chat Colors */
+    --background: 240 10% 8%;
+    --foreground: 240 5% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 240 10% 10%;
+    --card-foreground: 240 5% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 240 5% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Primary - Bright Blue for dark mode */
+    --primary: 214 100% 65%;
+    --primary-foreground: 240 10% 8%;
+    --primary-glow: 214 100% 75%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Dark Mode Chat Interface */
+    --chat-background: 240 10% 12%;
+    --chat-user-bubble: 214 100% 65%;
+    --chat-user-text: 240 10% 8%;
+    --chat-bot-bubble: 240 8% 15%;
+    --chat-bot-text: 240 5% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --secondary: 240 8% 15%;
+    --secondary-foreground: 240 5% 95%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --muted: 240 8% 15%;
+    --muted-foreground: 240 5% 65%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --accent: 240 8% 15%;
+    --accent-foreground: 240 5% 95%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 240 5% 95%;
+
+    --border: 240 8% 20%;
+    --input: 240 8% 20%;
+    --ring: 214 100% 65%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -101,5 +119,49 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Chat Message Animations */
+  .message-enter {
+    @apply opacity-0 translate-y-4 scale-95;
+    animation: message-slide-in 0.3s ease-out forwards;
+  }
+
+  .chat-input-focus {
+    @apply ring-2 ring-primary/20 border-primary;
+  }
+
+  /* Smooth Transitions */
+  .theme-transition * {
+    @apply transition-colors duration-300;
+  }
+}
+
+@layer utilities {
+  /* Custom gradients and effects */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+  }
+
+  .shadow-soft {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .shadow-message {
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+  }
+}
+
+/* Animation Keyframes */
+@keyframes message-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }

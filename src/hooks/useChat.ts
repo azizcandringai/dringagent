@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { Message, ChatState, ChatSession, FileAttachment } from '@/types/chat';
 import { useLanguage } from '@/hooks/useLanguage';
+import { openaiService } from '@/lib/openai';
 
 const STORAGE_KEY = 'chatbot-sessions';
 
@@ -82,27 +83,32 @@ export const useChat = () => {
     }
   }, [currentSession?.id, t]);
 
-  const generateBotResponse = (userMessage: string, files?: FileAttachment[]): string => {
-    const message = userMessage.toLowerCase();
-    
-    if (files && files.length > 0) {
-      const fileTypes = files.map(f => f.type.split('/')[0]).join(', ');
-      return `I can see you've shared ${files.length} file(s) (${fileTypes}). This is a demo chatbot, so I can't actually process the files, but in a real implementation, I could analyze images, read documents, etc.`;
+  const generateBotResponse = async (userMessage: string, files?: FileAttachment[], conversationHistory: Message[] = []): Promise<string> => {
+    try {
+      // Prepare conversation context for OpenAI
+      const messages = [
+        {
+          role: 'system' as const,
+          content: 'You are a helpful AI assistant. Be concise and helpful in your responses.'
+        },
+        // Add recent conversation history (last 10 messages)
+        ...conversationHistory.slice(-10).map(msg => ({
+          role: msg.sender === 'user' ? 'user' as const : 'assistant' as const,
+          content: msg.text
+        })),
+        {
+          role: 'user' as const,
+          content: files && files.length > 0 
+            ? `${userMessage}\n\n[User has shared ${files.length} file(s): ${files.map(f => f.name).join(', ')}]`
+            : userMessage
+        }
+      ];
+
+      return await openaiService.sendMessage(messages);
+    } catch (error) {
+      console.error('Error generating response:', error);
+      return 'Sorry, I encountered an error while processing your message. Please try again.';
     }
-    
-    if (message.includes('hello') || message.includes('hi') || message.includes('hola') || message.includes('merhaba')) {
-      return t('welcome');
-    }
-    
-    if (message.includes('help') || message.includes('ayuda') || message.includes('yardım')) {
-      return 'I\'m here to help! You can ask me anything or share files. This is a demo chatbot to showcase the interface.';
-    }
-    
-    if (message.includes('weather') || message.includes('tiempo') || message.includes('hava')) {
-      return 'I don\'t have access to real weather data, but I hope it\'s nice where you are! ☀️';
-    }
-    
-    return t('defaultBotResponse');
   };
 
   const sendMessage = useCallback(async (text: string, files?: FileAttachment[]) => {
@@ -133,27 +139,52 @@ export const useChat = () => {
     }));
 
     // Generate bot response
-    setTimeout(() => {
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: generateBotResponse(text, files),
-        sender: 'bot',
-        timestamp: new Date(),
-      };
+    setTimeout(async () => {
+      try {
+        const responseText = await generateBotResponse(text, files, currentSession.messages);
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: responseText,
+          sender: 'bot',
+          timestamp: new Date(),
+        };
 
-      setChatState(prev => ({
-        ...prev,
-        sessions: prev.sessions.map(session =>
-          session.id === currentSession.id
-            ? { 
-                ...session, 
-                messages: [...session.messages, botMessage],
-                updatedAt: new Date()
-              }
-            : session
-        ),
-        isTyping: false,
-      }));
+        setChatState(prev => ({
+          ...prev,
+          sessions: prev.sessions.map(session =>
+            session.id === currentSession.id
+              ? { 
+                  ...session, 
+                  messages: [...session.messages, botMessage],
+                  updatedAt: new Date()
+                }
+              : session
+          ),
+          isTyping: false,
+        }));
+      } catch (error) {
+        console.error('Error generating bot response:', error);
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: 'Sorry, I encountered an error. Please try again.',
+          sender: 'bot',
+          timestamp: new Date(),
+        };
+
+        setChatState(prev => ({
+          ...prev,
+          sessions: prev.sessions.map(session =>
+            session.id === currentSession.id
+              ? { 
+                  ...session, 
+                  messages: [...session.messages, errorMessage],
+                  updatedAt: new Date()
+                }
+              : session
+          ),
+          isTyping: false,
+        }));
+      }
     }, 1000 + Math.random() * 1500);
   }, [t, currentSession]);
 

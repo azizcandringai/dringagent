@@ -38,7 +38,7 @@ export const ChatInput = ({ onSendMessage, disabled = false }: ChatInputProps) =
   };
 
   return (
-    <div className="p-4 border-t border-border bg-card space-y-3">
+    <div className="p-3 md:p-4 border-t border-border bg-card space-y-2 md:space-y-3">
       {/* File Upload */}
       <FileUpload
         onFilesSelected={handleFilesSelected}
@@ -47,7 +47,7 @@ export const ChatInput = ({ onSendMessage, disabled = false }: ChatInputProps) =
       />
       
       {/* Input Area */}
-      <div className="flex gap-3 items-end">{/* ... keep existing code */}
+      <div className="flex gap-2 md:gap-3 items-end">
         <div className="flex-1">
           <textarea
             value={message}
@@ -56,9 +56,9 @@ export const ChatInput = ({ onSendMessage, disabled = false }: ChatInputProps) =
             placeholder={t('placeholder')}
             disabled={disabled}
             rows={1}
-            className="w-full resize-none rounded-xl border border-input bg-background px-4 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus:chat-input-focus outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full resize-none rounded-xl border border-input bg-background px-3 md:px-4 py-2.5 md:py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus:chat-input-focus outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             style={{
-              minHeight: '44px',
+              minHeight: '40px',
               maxHeight: '120px',
               overflow: 'auto'
             }}
@@ -72,14 +72,14 @@ export const ChatInput = ({ onSendMessage, disabled = false }: ChatInputProps) =
         <button
           onClick={handleSend}
           disabled={(!message.trim() && selectedFiles.length === 0) || disabled}
-          className={`flex-shrink-0 p-3 rounded-xl transition-all duration-200 ${
+          className={`flex-shrink-0 p-2.5 md:p-3 rounded-xl transition-all duration-200 ${
             (message.trim() || selectedFiles.length > 0) && !disabled
               ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-soft'
               : 'bg-muted text-muted-foreground cursor-not-allowed'
           }`}
           title={t('send')}
         >
-          <Send size={18} />
+          <Send size={16} className="md:w-[18px] md:h-[18px]" />
         </button>
       </div>
     </div>

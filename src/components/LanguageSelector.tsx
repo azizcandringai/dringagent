@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDown, Languages } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import type { LanguageCode } from '@/lib/languages';
@@ -6,19 +6,24 @@ import type { LanguageCode } from '@/lib/languages';
 export const LanguageSelector = () => {
   const { currentLanguage, changeLanguage, availableLanguages, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState(availableLanguages.find(lang => lang.code === currentLanguage));
 
-  const currentLang = availableLanguages.find(lang => lang.code === currentLanguage);
+  // Update current language display when language changes
+  useEffect(() => {
+    setCurrentLang(availableLanguages.find(lang => lang.code === currentLanguage));
+  }, [currentLanguage, availableLanguages]);
 
   return (
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+        className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
         title={t('language')}
       >
-        <Languages size={16} />
-        <span className="text-sm font-medium">{currentLang?.flag}</span>
-        <ChevronDown size={14} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <Languages size={14} className="md:w-4 md:h-4" />
+        <span className="text-sm font-medium hidden sm:inline">{currentLang?.flag}</span>
+        <span className="text-sm font-medium sm:hidden">{currentLang?.flag}</span>
+        <ChevronDown size={12} className={`md:w-3.5 md:h-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (

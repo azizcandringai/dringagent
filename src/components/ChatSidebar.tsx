@@ -66,7 +66,7 @@ export const ChatSidebar = ({
 
       {/* Sidebar */}
       <div className={`
-        fixed lg:relative inset-y-0 left-0 z-30 w-80 bg-card border-r border-border
+        fixed lg:relative inset-y-0 left-0 z-30 w-72 md:w-80 bg-card border-r border-border
         transform transition-transform duration-300 ease-in-out
         lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>

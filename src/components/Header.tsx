@@ -1,7 +1,6 @@
 import { MessageCircle } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageSelector } from './LanguageSelector';
-import { OpenAISettings } from './OpenAISettings';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export const Header = () => {
@@ -17,7 +16,6 @@ export const Header = () => {
       </div>
       
       <div className="flex items-center gap-2">
-        <OpenAISettings />
         <LanguageSelector />
         <ThemeToggle />
       </div>
